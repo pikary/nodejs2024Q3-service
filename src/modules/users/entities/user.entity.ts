@@ -6,3 +6,5 @@ export interface User {
     createdAt: number; // timestamp of creation
     updatedAt: number; // timestamp of last update
 }
+
+export type SafeUser = Omit<User, 'password'>;

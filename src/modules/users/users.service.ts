@@ -1,9 +1,9 @@
 // src/users/users.service.ts
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
-import { User } from './entities/user.entity';
+import { Injectable, NotFoundException, ConflictException, BadRequestException, ForbiddenException } from '@nestjs/common';
+import { SafeUser, User } from './entities/user.entity';
 
 import { CreateUserDto } from './dto/create-user.dto'
-// import { UpdatePasswordDto } from './dto/update-password.dto';
+import { UpdatePassword } from './dto/update-password.dto';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class UsersService {
     const newUser: User = {
       id: uuidv4(),
       login: createUserDto.login,
-      password:'',
+      password: '',
       version: 1,
       createdAt: Date.now(),
       updatedAt: Date.now(),
@@ -28,29 +28,35 @@ export class UsersService {
   }
 
   findAll(): User[] {
-    return this.users.map(({  ...user }) => user);
+    return this.users.map(({ ...user }) => user);
   }
 
   findOne(id: string): User {
     const user = this.users.find(user => user.id === id);
     if (!user) throw new NotFoundException('User not found');
-    const {  ...result } = user;
+    const { ...result } = user;
     return result;
   }
 
-//   updatePassword(id: string, updatePasswordDto: UpdatePasswordDto): User {
-//     const user = this.findOne(id);
-//     if (user.password !== updatePasswordDto.oldPassword) {
-//       throw new ConflictException('Incorrect old password');
-//     }
+  updatePassword(id: string, updatePasswordDto: UpdatePassword): SafeUser {
+    const user = this.findOne(id)
+    const { oldPassword, newPassword } = updatePasswordDto
+    if (!user) {
+      throw new NotFoundException('User not found')
+    }
+    if (user.password !== oldPassword) {
+      throw new ForbiddenException('Password incorrect')
+    }
+    if (newPassword === oldPassword) {
+      throw new BadRequestException('Passwords should differ')
+    }
+    user.password = updatePasswordDto.newPassword;
+    user.version += 1;
+    user.updatedAt = Date.now();
 
-//     user.password = updatePasswordDto.newPassword;
-//     user.version += 1;
-//     user.updateAt = Date.now();
-
-//     const { password, ...result } = user;
-//     return result;
-//   }
+    const { password, ...result } = user;
+    return result;
+  }
 
   remove(id: string): void {
     const index = this.users.findIndex(user => user.id === id);
