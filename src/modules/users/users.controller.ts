@@ -14,7 +14,7 @@ import {
   } from '@nestjs/common';
   import { UsersService } from './users.service';
   import { CreateUserDto } from './dto/create-user.dto';
-  import {  UpdatePassword} from './dto/update-password.dto';
+  import {  UpdatePasswordDto} from './dto/update-password.dto';
   import { Response } from 'express';
   
   @Controller('user')
