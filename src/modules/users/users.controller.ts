@@ -69,6 +69,7 @@ import {
         const updatedUser = this.usersService.updatePassword(id, updatePasswordDto);
         return res.status(HttpStatus.OK).json(updatedUser);
       } catch (error) {
+        
         return res.status(error.status || HttpStatus.NOT_FOUND).json({
           message: error.message || 'User not found',
         });

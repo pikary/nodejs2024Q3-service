@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './modules/users/users.module';
 import { TracksModule } from './modules/tracks/tracks.module';
+import { ArtistsModule } from './modules/artists/artists.module';
 
 
 @Module({
@@ -11,7 +12,7 @@ import { TracksModule } from './modules/tracks/tracks.module';
     ConfigModule.forRoot({
       isGlobal: true
     }),
-    UsersModule, TracksModule
+    UsersModule, TracksModule,ArtistsModule
   ],
   controllers: [AppController],
   providers: [AppService],

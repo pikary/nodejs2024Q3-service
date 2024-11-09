@@ -47,7 +47,7 @@ export class UsersService {
       throw new ForbiddenException('Password incorrect')
     }
     if (newPassword === oldPassword) {
-      throw new BadRequestException('Passwords should differ')
+      const a = new BadRequestException('Passwords should differ')
     }
     user.password = updatePasswordDto.newPassword;
     user.version += 1;
