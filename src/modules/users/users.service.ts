@@ -3,7 +3,7 @@ import { Injectable, NotFoundException, ConflictException, BadRequestException, 
 import { SafeUser, User } from './entities/user.entity';
 
 import { CreateUserDto } from './dto/create-user.dto'
-import { UpdatePassword } from './dto/update-password.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
@@ -38,7 +38,7 @@ export class UsersService {
     return result;
   }
 
-  updatePassword(id: string, updatePasswordDto: UpdatePassword): SafeUser {
+  updatePassword(id: string, updatePasswordDto: UpdatePasswordDto): SafeUser {
     const user = this.findOne(id)
     const { oldPassword, newPassword } = updatePasswordDto
     if (!user) {
