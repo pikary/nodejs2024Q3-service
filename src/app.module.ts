@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './modules/users/users.module';
 import { TracksModule } from './modules/tracks/tracks.module';
 import { ArtistsModule } from './modules/artists/artists.module';
+import { AlbumsModule } from './modules/albums/albums.module';
 
 
 @Module({
@@ -12,7 +13,7 @@ import { ArtistsModule } from './modules/artists/artists.module';
     ConfigModule.forRoot({
       isGlobal: true
     }),
-    UsersModule, TracksModule,ArtistsModule
+    UsersModule, TracksModule,ArtistsModule,AlbumsModule
   ],
   controllers: [AppController],
   providers: [AppService],
