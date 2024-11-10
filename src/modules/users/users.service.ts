@@ -9,21 +9,22 @@ import { v4 as uuidv4 } from 'uuid';
 export class UsersService {
   private users: User[] = []; // In-memory storage
 
-  create(createUserDto: CreateUserDto): User {
+  create(createUserDto: CreateUserDto): SafeUser {
     const userExists = this.users.some(user => user.login === createUserDto.login);
     if (userExists) throw new ConflictException('User with this login exists');
 
     const newUser: User = {
       id: uuidv4(),
       login: createUserDto.login,
-      password: '',
+      password: createUserDto.password,
       version: 1,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
 
     this.users.push(newUser);
-    return newUser;
+    const { password, ...userWithoutPassword } = newUser;
+    return userWithoutPassword;
   }
 
   findAll(): User[] {
@@ -38,23 +39,42 @@ export class UsersService {
   }
 
   updatePassword(id: string, updatePasswordDto: UpdatePasswordDto): SafeUser {
-    const user = this.findOne(id)
-    const { oldPassword, newPassword } = updatePasswordDto
-    if (!user) {
-      throw new NotFoundException('User not found')
-    }
-    if (user.password !== oldPassword) {
-      throw new ForbiddenException('Password incorrect')
-    }
-    if (newPassword === oldPassword) {
-      const a = new BadRequestException('Passwords should differ')
-    }
-    user.password = updatePasswordDto.newPassword;
-    user.version += 1;
-    user.updatedAt = Date.now();
+    try {
+      const user = this.findOne(id)
+      const { oldPassword, newPassword } = updatePasswordDto
+      if (!user) {
+        throw new NotFoundException('User not found')
+      }
+      if (user.password !== oldPassword) {
+        throw new ForbiddenException('Password incorrect')
+      }
+      if (newPassword === oldPassword) {
+        throw new BadRequestException('Passwords should differ')
+      }
+      Object.assign(user, {
+        password: newPassword,
+        version: user.version + 1,
+        updatedAt: Date.now(),
+      });
 
-    const { password, ...result } = user;
-    return result;
+      const safeUser: SafeUser = {
+        id: user.id,
+        login: user.login,
+        version: user.version,
+        updatedAt: user.updatedAt,
+        createdAt: user.createdAt,
+
+      }
+      return safeUser;
+    } catch (e) {
+      if (e instanceof NotFoundException) {
+        throw new NotFoundException('not found')
+      } else {
+        throw e
+
+      }
+    }
+
   }
 
   remove(id: string): void {

@@ -33,7 +33,7 @@ export class TracksController {
     ) {
         try {
             const track = this.trackService.findOne(id)
-            return response.status(HttpStatus.OK).json(track)
+            return res.status(HttpStatus.OK).json(track)
         } catch (e) {
             console.log(e);
             

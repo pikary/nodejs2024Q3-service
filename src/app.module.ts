@@ -6,6 +6,7 @@ import { UsersModule } from './modules/users/users.module';
 import { TracksModule } from './modules/tracks/tracks.module';
 import { ArtistsModule } from './modules/artists/artists.module';
 import { AlbumsModule } from './modules/albums/albums.module';
+import { FavoritesModule } from './modules/favorites/favorite.module';
 
 
 @Module({
@@ -13,7 +14,7 @@ import { AlbumsModule } from './modules/albums/albums.module';
     ConfigModule.forRoot({
       isGlobal: true
     }),
-    UsersModule, TracksModule,ArtistsModule,AlbumsModule
+    UsersModule, TracksModule, ArtistsModule, AlbumsModule, FavoritesModule
   ],
   controllers: [AppController],
   providers: [AppService],

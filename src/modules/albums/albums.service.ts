@@ -3,10 +3,14 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Album } from './albums.entities';
 import { CreateAlbumDto } from './dto/albums-create.dto';
 import { UpdateAlbumDto } from './dto/albums-update.dto';
+import { TracksService } from '../tracks/tracks.service';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AlbumsService {
+    constructor(
+        private readonly tracksService: TracksService,) {
+    }
     private albums: Album[] = []; // In-memory storage for albums
 
     create(createAlbumDto: CreateAlbumDto): Album {
@@ -39,5 +43,6 @@ export class AlbumsService {
         const index = this.albums.findIndex(album => album.id === id);
         if (index === -1) throw new NotFoundException('Album not found');
         this.albums.splice(index, 1);
+        this.tracksService.albumRemoveHandler(id)
     }
 }

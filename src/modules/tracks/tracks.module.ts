@@ -4,6 +4,7 @@ import { TracksService } from './tracks.service';
 
 @Module({
     imports:[TracksService],
+    exports:[TracksService],
     controllers: [TracksController],  
     providers: [TracksService],       
 })

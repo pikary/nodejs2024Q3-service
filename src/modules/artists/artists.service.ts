@@ -4,11 +4,13 @@ import { Artist } from './artists.entities';
 import { CreateArtistDto } from './dto/artists-create.dto';
 import { UpdateArtistDto } from './dto/artists-update.dto';
 import { v4 as uuidv4 } from 'uuid';
+import { TracksService } from '../tracks/tracks.service';
 
 @Injectable()
 export class ArtistsService {
     private artists: Artist[] = []; // In-memory storage for artists
 
+    constructor(private readonly tracksService:TracksService){}
     create(createArtistDto: CreateArtistDto): Artist {
         const newArtist: Artist = {
             id: uuidv4(),
@@ -39,5 +41,6 @@ export class ArtistsService {
         const index = this.artists.findIndex(artist => artist.id === id);
         if (index === -1) throw new NotFoundException('Artist not found');
         this.artists.splice(index, 1);
+        this.tracksService.artistRemoveHandler(id)
     }
 }
