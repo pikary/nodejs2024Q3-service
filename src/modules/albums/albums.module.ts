@@ -6,7 +6,7 @@ import { TracksService } from '../tracks/tracks.service';
 import { TracksModule } from '../tracks/tracks.module';
 
 @Module({
-  imports:[TracksModule],
+  imports: [TracksModule],
   controllers: [AlbumsController],
   providers: [AlbumsService],
   exports: [AlbumsService],

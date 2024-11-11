@@ -12,4 +12,3 @@ export class CreateAlbumDto {
   @IsOptional()
   artistId: string | null;
 }
-
