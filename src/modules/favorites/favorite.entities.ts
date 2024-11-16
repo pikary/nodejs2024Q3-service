@@ -1,15 +1,28 @@
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Artist } from '../artists/artists.entities';
 import { Album } from '../albums/albums.entities';
 import { Track } from '../tracks/tracks.entities';
 
-export interface Favorites {
-  artists: string[]; // favorite artists ids
-  albums: string[]; // favorite albums ids
-  tracks: string[]; // favorite tracks ids
-}
+@Entity('favorites')
+export class Favorite {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-export interface FavoritesResponse {
-  artists: Artist[];
-  albums: Album[];
-  tracks: Track[];
+  @ManyToOne(() => Artist, { nullable: true, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'artistId' })
+  artist: Artist | null;
+
+  @ManyToOne(() => Album, { nullable: true, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'albumId' })
+  album: Album | null;
+
+  @ManyToOne(() => Track, { nullable: true, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'trackId' })
+  track: Track | null;
 }
