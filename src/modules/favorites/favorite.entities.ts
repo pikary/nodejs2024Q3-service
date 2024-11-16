@@ -1,10 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { Artist } from '../artists/artists.entities';
 import { Album } from '../albums/albums.entities';
 import { Track } from '../tracks/tracks.entities';
