@@ -4,9 +4,11 @@ import { AlbumsController } from './albums.controller';
 import { AlbumsService } from './albums.service';
 import { TracksService } from '../tracks/tracks.service';
 import { TracksModule } from '../tracks/tracks.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Album } from './albums.entities';
 
 @Module({
-  imports: [TracksModule],
+  imports: [TypeOrmModule.forFeature([Album]), TracksModule],
   controllers: [AlbumsController],
   providers: [AlbumsService],
   exports: [AlbumsService],
