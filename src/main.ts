@@ -7,8 +7,8 @@ import * as yaml from 'js-yaml';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const openApiDocument = yaml.load(fs.readFileSync('./doc/api.yaml', 'utf8'));
-  SwaggerModule.setup('api', app, openApiDocument);
+  // const openApiDocument = yaml.load(fs.readFileSync('./doc/api.yaml', 'utf8'));
+  // SwaggerModule.setup('api', app, openApiDocument);
 
   app.useGlobalPipes(
     new ValidationPipe({

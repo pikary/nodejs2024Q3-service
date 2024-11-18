@@ -1,0 +1,18 @@
+{
+    "type": "postgres",
+    "host": "localhost",
+    "port": 5432,
+    "username": "postgres",
+    "password": "admin",
+    "database": "service",
+    "entities": [
+        "src/**/**/*.entities.ts"
+    ],
+    "migrationsTableName": "student_migration_table",
+    "migrations": [
+        "migration/*.ts"
+    ],
+    "cli": {
+        "migrationsDir": "migration"
+    }
+}
