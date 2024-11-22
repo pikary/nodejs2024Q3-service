@@ -10,11 +10,27 @@ import { LoggingService } from './loggingService';
 
 @Catch(HttpException)
 export class CustomExceptionFilter implements ExceptionFilter {
+  constructor(private readonly loggingService: LoggingService) {}
+
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
-    const status = exception.getStatus();
+    let status = exception.getStatus();
+    let message = 'Internal server error';
+    if (exception instanceof HttpException) {
+      status = exception.getStatus();
+      const response = exception.getResponse();
+      message =
+        typeof response === 'string'
+          ? response
+          : (response as any).message || message;
+    }
+
+    this.loggingService.error(
+      `Exception - Status: ${status}, Message: ${message}, Path: ${request.url}`,
+      exception instanceof Error ? exception.stack : '',
+    );
 
     (response as Response).status(status).json({
       statusCode: status,
