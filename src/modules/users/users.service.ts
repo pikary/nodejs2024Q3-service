@@ -30,8 +30,10 @@ export class UsersService {
     // Create a new user
     const newUser = this.userRepository.create({
       login: createUserDto.login,
-      password: createUserDto.password, // Consider hashing the password
+      password: createUserDto.password,
     });
+    console.log(newUser);
+
     const savedUser = await this.userRepository.save(newUser);
 
     const { password, ...safeUser } = savedUser;

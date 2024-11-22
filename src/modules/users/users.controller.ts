@@ -43,12 +43,13 @@ export class UsersController {
   }
 
   @Post()
-  @HttpCode(HttpStatus.CREATED)
-  createUser(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
+  async createUser(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
     try {
-      const newUser = this.usersService.create(createUserDto);
+      const newUser = await this.usersService.create(createUserDto);
       return res.status(HttpStatus.CREATED).json(newUser);
     } catch (error) {
+      console.error(error);
+
       return res.status(error.status || HttpStatus.BAD_REQUEST).json({
         message: error.message || 'Invalid request body',
       });
