@@ -9,8 +9,8 @@ import { ArtistsModule } from './modules/artists/artists.module';
 import { AlbumsModule } from './modules/albums/albums.module';
 import { FavoritesModule } from './modules/favorites/favorite.module';
 import { AppDataSource } from './data-source';
-import { RequestLoggingMiddleware } from './modules/loggers/RequestLogging';
-import { LoggingService } from './modules/loggers/loggingService';
+import { RequestLoggingMiddleware } from './modules/loggers/LoggingServices';
+import { BaseLogger } from './modules/loggers/BaseLogger';
 
 console.log('DB Config:', {
   host: process.env.DATABASE_HOST,
@@ -33,7 +33,7 @@ console.log('DB Config:', {
     FavoritesModule,
   ],
   controllers: [AppController],
-  providers: [AppService, LoggingService],
+  providers: [AppService, BaseLogger],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
-export class LoggingService {
-  private readonly logger = new Logger(LoggingService.name);
+export class BaseLogger {
+  private readonly logger = new Logger('LOGS');
 
   log(message: string) {
     this.logger.log(message);

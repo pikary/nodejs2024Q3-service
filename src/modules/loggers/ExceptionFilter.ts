@@ -6,11 +6,11 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { LoggingService } from './loggingService';
+import { BaseLogger } from './BaseLogger';
 
 @Catch(HttpException)
 export class CustomExceptionFilter implements ExceptionFilter {
-  constructor(private readonly loggingService: LoggingService) {}
+  constructor(private readonly loggingService: BaseLogger) {}
 
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
