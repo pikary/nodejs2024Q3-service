@@ -12,20 +12,29 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { CreateUserDto } from './dto/create-user.dto';
+import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {
-  @Post('register')
+  constructor(private readonly authService: AuthService) {}
+
+  @Post('signup')
   @HttpCode(HttpStatus.CREATED)
-  register(@Body() registerDto: any, @Res() res: Response) {
+  register(@Body() registerDto: CreateUserDto, @Res() res: Response) {
     // Logic to register a new user
-    res.status(HttpStatus.CREATED).json({
-      message: 'User registered successfully',
-      data: registerDto, // Replace with actual saved user data
-    });
+    try {
+      const newUser = this.authService.create(registerDto);
+
+      return res.status(HttpStatus.CREATED).json(newUser);
+    } catch (error) {
+      return res.status(error.status || HttpStatus.BAD_REQUEST).json({
+        message: error.message || 'Invalid request body',
+      });
+    }
   }
 
-  @Post('login')
+  @Post('register')
   @HttpCode(HttpStatus.OK)
   login(@Body() loginDto: any, @Res() res: Response) {
     // Logic to authenticate a user
@@ -35,7 +44,7 @@ export class AuthController {
     });
   }
 
-  @Get('profile/:id')
+  @Get('refresh')
   @HttpCode(HttpStatus.OK)
   getUserProfile(@Param('id', ParseUUIDPipe) id: string, @Res() res: Response) {
     // Logic to fetch a user's profile by ID
@@ -43,29 +52,5 @@ export class AuthController {
       message: `Profile for user with ID ${id}`,
       data: {}, // Replace with actual user data
     });
-  }
-
-  @Put('profile/:id')
-  @HttpCode(HttpStatus.OK)
-  updateUserProfile(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateProfileDto: any,
-    @Res() res: Response,
-  ) {
-    // Logic to update a user's profile by ID
-    res.status(HttpStatus.OK).json({
-      message: `Profile for user with ID ${id} updated successfully`,
-      data: updateProfileDto, // Replace with actual updated data
-    });
-  }
-
-  @Delete('profile/:id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  deleteUserAccount(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Res() res: Response,
-  ) {
-    // Logic to delete a user's account by ID
-    res.status(HttpStatus.NO_CONTENT).send();
   }
 }
