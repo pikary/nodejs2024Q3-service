@@ -1,15 +1,4 @@
-import {
-  NotFoundException,
-  ConflictException,
-  BadRequestException,
-  ForbiddenException,
-} from '@nestjs/common';
-import { SafeUser, User } from './entities/user.entity';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdatePasswordDto } from './dto/update-password.dto';
-import { v4 as uuidv4 } from 'uuid';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 
@@ -20,17 +9,32 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(
+  async login(
     username: string,
     pass: string,
   ): Promise<{ access_token: string }> {
-    const user = await this.usersService.findOne(username);
-    if (user?.password !== pass) {
-      throw new UnauthorizedException();
+    try {
+      const user = this.usersService.findOne(username);
+      if (user?.password !== pass) {
+        throw new UnauthorizedException();
+      }
+      const payload = { sub: user.id, username: user.login };
+      return {
+        access_token: await this.jwtService.signAsync(payload),
+      };
+    } catch (e) {
+      throw e;
     }
-    const payload = { sub: user.id, username: user.login };
-    return {
-      access_token: await this.jwtService.signAsync(payload),
-    };
+  }
+
+  async generateTokens(user: any) {
+    const payload = { username: user.username, sub: user.id };
+    const accessToken = this.jwtService.sign(payload, { expiresIn: '15m' });
+    const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
+
+    // Store the refresh token securely
+    // this.refreshTokens.set(user.id, refreshToken);
+
+    return { accessToken, refreshToken };
   }
 }
