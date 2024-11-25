@@ -12,13 +12,16 @@ import {
   HttpStatus,
   BadRequestException,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { Response } from 'express';
 import { isUUID } from 'class-validator';
+import { AuthGuard } from '../auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('user')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}

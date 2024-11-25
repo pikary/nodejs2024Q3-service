@@ -11,6 +11,7 @@ import { MiddlewareConsumer } from '@nestjs/common';
 import { RequestLoggingMiddleware } from './modules/loggers/LoggingService';
 import { BaseLogger } from './modules/loggers/BaseLogger';
 import { AuthModule } from './modules/auth/auth.module';
+import { JwtService } from '@nestjs/jwt';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -24,7 +25,7 @@ import { AuthModule } from './modules/auth/auth.module';
     FavoritesModule,
   ],
   controllers: [AppController],
-  providers: [AppService, BaseLogger],
+  providers: [AppService, BaseLogger, JwtService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

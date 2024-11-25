@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -11,6 +15,7 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
   ) {}
+  private refreshTokens = new Map<string, string>(); // Store refresh tokens (keyed by user ID)
 
   async login(username: string, pass: string): Promise<any> {
     try {
@@ -19,8 +24,9 @@ export class AuthService {
       if (!isMatch) {
         throw new UnauthorizedException();
       }
-      const payload = { sub: user.id, username: user.login };
+      const payload = { id: user.id, username: user.login };
       const { accessToken, refreshToken } = await this.generateTokens(payload);
+      this.refreshTokens.set(user.id, refreshToken);
       return {
         ...user,
         access_token: accessToken,
@@ -45,7 +51,7 @@ export class AuthService {
   }
 
   async generateTokens(user: any) {
-    const payload = { username: user.username, sub: user.id };
+    const payload = { username: user.username, id: user.id };
     const accessToken = this.jwtService.sign(payload, { expiresIn: '15m' });
     const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
 
@@ -53,5 +59,31 @@ export class AuthService {
     // this.refreshTokens.set(user.id, refreshToken);
 
     return { accessToken, refreshToken };
+  }
+
+  async refreshtoken(refrshtoken) {
+    try {
+      const verify = await this.jwtService.verifyAsync(refrshtoken, {
+        secret: 'secret',
+      });
+      const storedToken = this.refreshTokens.get(verify.id);
+      if (!storedToken || storedToken !== refrshtoken) {
+        throw new ForbiddenException('Invalid refresh token');
+      }
+
+      const { refreshToken, accessToken } = await this.generateTokens({
+        id: verify.id,
+        login: verify.login,
+      });
+      // Update the stored refresh token
+      this.refreshTokens.set(verify.id, refreshToken);
+
+      return { accessToken, refreshToken };
+    } catch (e) {
+      if (e.name === 'TokenExpiredError') {
+        throw new UnauthorizedException('Refresh token expired');
+      }
+      throw new ForbiddenException('Invalid refresh token');
+    }
   }
 }

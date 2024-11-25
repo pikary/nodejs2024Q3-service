@@ -9,10 +9,13 @@ import {
   ParseUUIDPipe,
   Res,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { FavoritesService } from './favorite.service';
 import { Response } from 'express';
+import { AuthGuard } from '../auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('favs')
 export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}

@@ -54,13 +54,37 @@ export class AuthController {
     });
   }
 
-  @Get('refresh')
+  @Post('refresh')
   @HttpCode(HttpStatus.OK)
-  getUserProfile(@Param('id', ParseUUIDPipe) id: string, @Res() res: Response) {
-    // Logic to fetch a user's profile by ID
-    res.status(HttpStatus.OK).json({
-      message: `Profile for user with ID ${id}`,
-      data: {}, // Replace with actual user data
-    });
+  async refresh(
+    @Body() refreshTokenDto: { refreshToken: string },
+    @Res() res: Response,
+  ) {
+    try {
+      if (!refreshTokenDto.refreshToken) {
+        return res.status(HttpStatus.UNAUTHORIZED).json({
+          message: 'Refresh token is missing',
+        });
+      }
+
+      const newTokens = await this.authService.refreshToken(
+        refreshTokenDto.refreshToken,
+      );
+      return res.status(HttpStatus.OK).json({
+        message: 'Token refreshed successfully',
+        accessToken: newTokens.accessToken,
+        refreshToken: newTokens.refreshToken,
+      });
+    } catch (error) {
+      if (error.message === 'TokenExpiredError') {
+        return res.status(HttpStatus.FORBIDDEN).json({
+          message: 'Refresh token expired',
+        });
+      }
+
+      return res.status(HttpStatus.FORBIDDEN).json({
+        message: 'Invalid refresh token',
+      });
+    }
   }
 }

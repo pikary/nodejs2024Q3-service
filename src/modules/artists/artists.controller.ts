@@ -10,12 +10,15 @@ import {
   ParseUUIDPipe,
   Res,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { ArtistsService } from './artists.service';
 import { CreateArtistDto } from './dto/artists-create.dto';
 import { UpdateArtistDto } from './dto/artists-update.dto';
 import { Response } from 'express';
+import { AuthGuard } from '../auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('artist')
 export class ArtistsController {
   constructor(private readonly artistsService: ArtistsService) {}
