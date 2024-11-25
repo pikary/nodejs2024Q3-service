@@ -28,9 +28,8 @@ export class AuthService {
       const { accessToken, refreshToken } = await this.generateTokens(payload);
       this.refreshTokens.set(user.id, refreshToken);
       return {
-        ...user,
-        access_token: accessToken,
-        refresh_token: refreshToken,
+        accessToken: accessToken,
+        refreshToken: refreshToken,
       };
     } catch (e) {
       throw e;
@@ -43,11 +42,11 @@ export class AuthService {
       login: username,
       password: hashedPassword,
     });
-    const { accessToken, refreshToken } = await this.generateTokens({
-      login: newUser.login,
-      password: newUser.id,
-    });
-    return { ...newUser, accessToken, refreshToken };
+    const payload = { id: newUser.id, username: newUser.login };
+    const { accessToken, refreshToken } = await this.generateTokens(payload);
+    this.refreshTokens.set(newUser.id, refreshToken);
+
+    return { accessToken, refreshToken, ...newUser };
   }
 
   async generateTokens(user: any) {
@@ -61,7 +60,7 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  async refreshtoken(refrshtoken) {
+  async refreshtoken(refrshtoken: string) {
     try {
       const verify = await this.jwtService.verifyAsync(refrshtoken, {
         secret: 'secret',

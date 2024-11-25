@@ -31,7 +31,7 @@ export class AuthController {
       );
       return res.status(HttpStatus.CREATED).json({
         message: 'User signed up successfully',
-        user: newUser,
+        ...newUser,
       });
     } catch (error) {
       return res.status(error.status || HttpStatus.BAD_REQUEST).json({
@@ -48,9 +48,7 @@ export class AuthController {
       loginDto.password,
     );
     res.status(HttpStatus.OK).json({
-      user: data,
-      message: 'User logged in successfully',
-      token: 'your-jwt-token', // Replace with actual JWT
+      ...data,
     });
   }
 
@@ -67,7 +65,7 @@ export class AuthController {
         });
       }
 
-      const newTokens = await this.authService.refreshToken(
+      const newTokens = await this.authService.refreshtoken(
         refreshTokenDto.refreshToken,
       );
       return res.status(HttpStatus.OK).json({
