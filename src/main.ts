@@ -6,12 +6,14 @@ import * as fs from 'fs';
 import * as yaml from 'js-yaml';
 import { AuthGuard } from './modules/auth/auth.guard';
 import { JwtService } from '@nestjs/jwt';
+import { CustomExceptionFilter } from './modules/loggers/ExceptionFilter';
+import { BaseLogger } from './modules/loggers/BaseLogger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const openApiDocument = yaml.load(fs.readFileSync('./doc/api.yaml', 'utf8'));
   SwaggerModule.setup('api', app, openApiDocument);
-
+  app.useGlobalFilters(new CustomExceptionFilter(app.get(BaseLogger)));
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
