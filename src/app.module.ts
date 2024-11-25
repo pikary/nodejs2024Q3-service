@@ -7,7 +7,9 @@ import { TracksModule } from './modules/tracks/tracks.module';
 import { ArtistsModule } from './modules/artists/artists.module';
 import { AlbumsModule } from './modules/albums/albums.module';
 import { FavoritesModule } from './modules/favorites/favorite.module';
-
+import { MiddlewareConsumer } from '@nestjs/common';
+import { RequestLoggingMiddleware } from './modules/loggers/LoggingService';
+import { BaseLogger } from './modules/loggers/BaseLogger';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -20,6 +22,10 @@ import { FavoritesModule } from './modules/favorites/favorite.module';
     FavoritesModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, BaseLogger],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(RequestLoggingMiddleware).forRoutes('*');
+  }
+}
