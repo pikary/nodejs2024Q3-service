@@ -10,11 +10,13 @@ import { FavoritesModule } from './modules/favorites/favorite.module';
 import { MiddlewareConsumer } from '@nestjs/common';
 import { RequestLoggingMiddleware } from './modules/loggers/LoggingService';
 import { BaseLogger } from './modules/loggers/BaseLogger';
+import { AuthModule } from './modules/auth/auth.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    AuthModule,
     UsersModule,
     TracksModule,
     ArtistsModule,

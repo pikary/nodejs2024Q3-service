@@ -29,7 +29,10 @@ export class AuthController {
         registerDto.login,
         registerDto.password,
       );
-      return { message: 'User signed up successfully', user: newUser };
+      return res.status(HttpStatus.CREATED).json({
+        message: 'User signed up successfully',
+        user: newUser,
+      });
     } catch (error) {
       return res.status(error.status || HttpStatus.BAD_REQUEST).json({
         message: error.message || 'Invalid request body',

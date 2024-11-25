@@ -45,6 +45,12 @@ export class UsersService {
     const { ...result } = user;
     return result;
   }
+  findByLogin(login: string): User {
+    const user = this.users.find((user) => user.login == login);
+    if (!user) throw new NotFoundException('User not found');
+    const { ...result } = user;
+    return result;
+  }
 
   updatePassword(id: string, updatePasswordDto: UpdatePasswordDto): SafeUser {
     const user = this.users.find((user) => user.id === id);
