@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { CreateUserDto } from './dto/create-user.dto';
+
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -21,12 +22,14 @@ export class AuthController {
 
   @Post('signup')
   @HttpCode(HttpStatus.CREATED)
-  register(@Body() registerDto: CreateUserDto, @Res() res: Response) {
+  async register(@Body() registerDto: CreateUserDto, @Res() res: Response) {
     // Logic to register a new user
     try {
-      const newUser = this.authService.create(registerDto);
-
-      return res.status(HttpStatus.CREATED).json(newUser);
+      const newUser = await this.authService.signup(
+        registerDto.login,
+        registerDto.password,
+      );
+      return { message: 'User signed up successfully', user: newUser };
     } catch (error) {
       return res.status(error.status || HttpStatus.BAD_REQUEST).json({
         message: error.message || 'Invalid request body',
@@ -34,11 +37,15 @@ export class AuthController {
     }
   }
 
-  @Post('register')
+  @Post('login')
   @HttpCode(HttpStatus.OK)
-  login(@Body() loginDto: any, @Res() res: Response) {
-    // Logic to authenticate a user
+  async login(@Body() loginDto: any, @Res() res: Response) {
+    const data = await this.authService.login(
+      loginDto.login,
+      loginDto.password,
+    );
     res.status(HttpStatus.OK).json({
+      user: data,
       message: 'User logged in successfully',
       token: 'your-jwt-token', // Replace with actual JWT
     });

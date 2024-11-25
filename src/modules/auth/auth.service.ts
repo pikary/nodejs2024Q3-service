@@ -27,6 +27,18 @@ export class AuthService {
     }
   }
 
+  async signup(username: string, password: string) {
+    const newUser = this.usersService.create({
+      login: username,
+      password: password,
+    });
+    const { accessToken, refreshToken } = await this.generateTokens({
+      login: newUser.login,
+      password: newUser.id,
+    });
+    return { ...newUser, accessToken, refreshToken };
+  }
+
   async generateTokens(user: any) {
     const payload = { username: user.username, sub: user.id };
     const accessToken = this.jwtService.sign(payload, { expiresIn: '15m' });
